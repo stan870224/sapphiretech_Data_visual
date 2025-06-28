@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8">
+  <title>Sapphire RMA Control</title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: "Segoe UI", sans-serif;
+      background-color: #f8f8f8;
+    }
+
+    .container {
+      display: grid;
+      grid-template-rows: 80px auto;
+      height: 100vh;
+      border: 2px solid #000;
+    }
+
+    .header {
+      display: flex;
+      align-items: center;
+      padding: 0 20px;
+      border-bottom: 2px solid #000;
+      background-color: #fff;
+    }
+
+    .header h1 {
+      font-size: 24px;
+      font-weight: normal;
+      margin: 0;
+      margin-left: 20px;
+    }
+
+    .header .logo {
+      font-size: 36px;
+      font-weight: bold;
+      font-family: 'Orbitron', sans-serif;
+      color: #ccc;
+    }
+
+    .main {
+      display: grid;
+      grid-template-columns: 150px 1fr;
+      height: 100%;
+    }
+
+    .sidebar {
+      border-right: 2px solid #000;
+      background-color: #f2f2f2;
+      display: flex;
+      flex-direction: column;
+      align-items: stretch;
+      padding: 20px 10px;
+      gap: 15px;
+    }
+
+    .sidebar button {
+      padding: 10px;
+      font-size: 16px;
+      border: 1px solid #000;
+      background-color: white;
+      cursor: pointer;
+    }
+
+    .content {
+      padding: 20px;
+      background-color: #ffffff;
+    }
+  </style>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+<div class="container">
+  <!-- 頁首 -->
+  <div class="header">
+    <div class="logo">SAPPHIRE</div>
+    <h1>Sapphire RMA Control</h1>
+  </div>
+
+  <!-- 主體區 -->
+  <div class="main">
+    <!-- 側邊欄按鈕 -->
+    <div class="sidebar">
+        <button onclick="location.href='select_page.html'">資料查詢</button>
+        <button onclick="location.href='insert_page.html'">新增資料</button>
+        <button onclick="location.href='update_page.html'">資料更新</button>
+    </div>
+
+
+    <!-- 主顯示區 -->
+    <div class="content">
+      <!-- 可以放表單、表格、報表等 -->
+      <p>歡迎使用 Sapphire RMA 系統</p>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

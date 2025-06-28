@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8">
+  <title>Sapphire RMA Control</title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: "Segoe UI", sans-serif;
+      background-color: #f8f8f8;
+    }
+
+    .container {
+      display: grid;
+      grid-template-rows: 80px auto;
+      min-height: 100vh;
+      border: 2px solid #000;
+    }
+
+    .header {
+      display: flex;
+      align-items: center;
+      padding: 0 20px;
+      border-bottom: 2px solid #000;
+      background-color: #fff;
+    }
+
+    .header h1 {
+      font-size: 24px;
+      font-weight: normal;
+      margin: 0;
+      margin-left: 20px;
+    }
+
+    .header .logo {
+      font-size: 36px;
+      font-weight: bold;
+      font-family: 'Orbitron', sans-serif;
+      color: #ccc;
+      text-decoration: none;
+    }
+
+    .main {
+      display: grid;
+      grid-template-columns: 150px 1fr;
+      height: 100%;
+    }
+
+    .sidebar {
+      border-right: 2px solid #000;
+      background-color: #f2f2f2;
+      display: flex;
+      flex-direction: column;
+      align-items: stretch;
+      padding: 20px 10px;
+      gap: 15px;
+    }
+
+    .sidebar button {
+      padding: 10px;
+      font-size: 16px;
+      border: 1px solid #000;
+      background-color: white;
+      cursor: pointer;
+    }
+
+    .content {
+      padding: 20px 40px 40px 40px;
+      max-width: none;
+      margin: 0;
+    }
+    .content h2{
+      margin-bottom: 40px;
+    }
+    .query-form {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px 30px;
+      margin-top: -20px;
+      margin-bottom: 50px;
+    }
+
+    .form-group {
+      display: flex;
+      align-items: center;
+    }
+
+    .form-group.label-block {
+      width: 100%;
+    }
+
+    .form-group label {
+      width: 80px;
+      margin-right: 5px;
+    }
+
+    .form-group input {
+      padding: 5px 10px;
+      width: 180px;
+    }
+
+    .query-form .button {
+      padding: 8px 16px;
+      border: 1px solid #000;
+      background-color: white;
+      cursor: pointer;
+    }
+    .table-wrapper {
+        overflow-x: auto;
+        max-width: 100%;
+        border: 1px solid #ccc;
+        margin-bottom: 40px;
+    }
+    table {
+      width: max-content;
+      border-collapse: collapse;
+      table-layout: auto;
+      background-color: #fff;
+    }
+
+    th, td {
+      border: 1px solid #aaa;
+      padding: 8px;
+      text-align: center;
+      font-size: 14px;
+      white-space: nowrap;
+    }
+
+    th {
+      overflow-x: auto;
+      background-color: #eee;
+    }
+  </style>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+<div class="container">
+  <!-- 頁首 -->
+  <div class="header">
+    <a href="index.html" class="logo">SAPPHIRE</a>
+    <h1>Sapphire RMA Control</h1>
+  </div>
+
+  <!-- 主體區 -->
+  <div class="main">
+    <!-- 側邊欄按鈕 -->
+    <div class="sidebar">
+      <button onclick="location.href='select_page.html'">資料查詢</button>
+      <button onclick="location.href='insert_page.html'">新增資料</button>
+      <button onclick="location.href='update_page.html'">資料更新</button>
+    </div>
+
+    <!-- 主顯示區 -->
+    <div class="content">
+      <h2>資料查詢</h2>
+
+      <!-- 查詢欄位 -->
+      <div class="query-form">
+        <div class="form-group">
+          <label for="sn">S/N:</label>
+          <input type="text" id="sn">
+        </div>
+        <div class="form-group">
+          <label for="pn">P/N:</label>
+          <input type="text" id="pn">
+        </div>
+        <div class="form-group">
+          <label for="sku">SKU#:</label>
+          <input type="text" id="sku">
+        </div>
+
+        <!-- 換行 -->
+        <div class="form-group label-block">
+          <label for="start-date">資料起迄:</label>
+          <input type="date" id="start-date">
+          <span style="margin: 0 10px;">~</span>
+          <input type="date" id="end-date">
+        </div>
+
+        <button class="button">查詢</button>
+      </div>
+
+      <!-- RMA 表格 -->
+      <h3>RMA Record</h3>
+      <div class="table-wrapper">
+        <table>
+          <thead>
+            <tr>
+              <th>RMA No</th>
+              <th>Customer Name</th>
+              <th>Serial No (可用掃碼)</th>
+              <th>Part No(可用掃碼)</th>
+              <th>SKU#(可用掃碼)</th>
+              <th>Product Name</th>
+              <th>Sell/Ship Date</th>
+              <th>Create Date</th>
+              <th>Return Date</th>
+              <th>Failure Desc</th>
+              <th>VI Damage Status</th>
+              <th>Test Result Desc</th>
+              <th>Replacment SN in TW(可用掃碼)</th>
+              <th>Replacment PN in TW(可用掃碼)</th>
+              <th>Replacment SKU# in TW(可用掃碼)</th>
+              <th>Replacement SN from HK</th>
+              <th>Replacement PN from HK</th>
+              <th>Replacement SKU# from HK</th>
+              <th>RMA board Test Result</th>
+              <th>End user invoice date </th>
+              <th>Warranty Until </th>
+              <th>Remark</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>RMA-001</td>
+              <td>張三公司</td>
+              <td>SN123456</td>
+              <td>PN998877</td>
+              <td>SKU-ABC</td>
+              <td>顯示卡X</td>
+              <td>2024-01-05</td>
+              <td>2024-06-20</td>
+              <td>2024-06-25</td>
+              <td>無法開機</td>
+              <td>否</td>
+              <td>更換電容後正常</td>
+            </tr>
+          </tbody>
+        </table>
+     </div>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>
