@@ -2,7 +2,7 @@
 <html lang="zh-Hant">
 <head>
   <meta charset="UTF-8">
-  <title>Sapphire RMA Control - 資料更新</title>
+  <title>Sapphire RMA Control</title>
   <style>
     * {
       box-sizing: border-box;
@@ -101,7 +101,7 @@
       margin-right: 5px;
     }
 
-    .form-group input {
+    .form-group input, .form-group select {
       padding: 5px 10px;
       width: 180px;
     }
@@ -119,6 +119,7 @@
       margin-bottom: 30px;
       background-color: #fff;
       min-height: 120px;
+      position: relative;
     }
 
     .current-data h3 {
@@ -131,6 +132,7 @@
       display: grid;
       grid-template-columns: repeat(3, 1fr);
       gap: 15px;
+      margin-bottom: 50px;
     }
 
     .current-data-item {
@@ -191,6 +193,19 @@
       font-size: 16px;
       float: right;
     }
+
+    .setup-btn {
+      padding: 8px 16px;
+      border: 1px solid #000;
+      background-color: white;
+      cursor: pointer;
+      font-size: 16px;
+      position: absolute;
+      bottom: 20px;
+      right: 20px;
+    }
+
+
   </style>
   <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700&display=swap" rel="stylesheet">
 </head>
@@ -208,13 +223,12 @@
     <!-- 側邊欄按鈕 -->
     <div class="sidebar">
       <button onclick="location.href='select_page.html'">資料查詢</button>
-      <button onclick="location.href='insert_page.html'">新增資料</button>
-      <button onclick="location.href='update_page.html'" class="active">資料更新</button>
+      <button onclick="location.href='update_page.html'" class="active">資料調整</button>
     </div>
 
     <!-- 主顯示區 -->
     <div class="content">
-      <h2>資料更新</h2>
+      <h2>資料調整</h2>
       
       <!-- 搜尋表單 -->
       <div class="query-form">
@@ -230,20 +244,38 @@
           <label>SKU#:</label>
           <input type="text" placeholder="輸入SKU">
         </div>
+        <div class="form-group">
+          <label>產品線:</label>
+          <select style="padding: 5px 10px; width: 180px;">
+            <option value="">請選擇產品線</option>
+            <option value="graphics">顯示卡</option>
+            <option value="motherboard">主機板</option>
+            <option value="ssd">固態硬碟</option>
+            <option value="memory">記憶體</option>
+            <option value="power">電源供應器</option>
+          </select>
+        </div>
         <button class="button">查詢</button>
-        <button class="button">查詢相關</button>
       </div>
 
       <!-- 當前資料顯示區域 -->
       <div class="current-data">
-        <h3>查詢到的資料</h3>
+        <h3>訂單資料</h3>
         <div class="current-data-content">
           <div class="current-data-item">
-            <label>S/N:</label>
+            <label>Rma No:</label>
             <span>-</span>
           </div>
           <div class="current-data-item">
-            <label>P/N:</label>
+            <label>Cutomer Name:</label>
+            <span>-</span>
+          </div>
+          <div class="current-data-item">
+            <label>Serial No:</label>
+            <span>-</span>
+          </div>
+          <div class="current-data-item">
+            <label>Part No:</label>
             <span>-</span>
           </div>
           <div class="current-data-item">
@@ -251,23 +283,91 @@
             <span>-</span>
           </div>
           <div class="current-data-item">
-            <label>型號:</label>
+            <label>Product Name:</label>
             <span>-</span>
           </div>
           <div class="current-data-item">
-            <label>狀態:</label>
+            <label>Sell/Ship Date:</label>
             <span>-</span>
           </div>
           <div class="current-data-item">
-            <label>備註:</label>
+            <label>Create Date:</label>
             <span>-</span>
+          </div>
+          <div class="current-data-item">
+            <label>Return Date:</label>
+            <span>-</span>
+          </div>
+          <div class="current-data-item">
+            <label>Failure desc:</label>
+            <span>-</span>
+          </div>
+          <div class="current-data-item">
+            <label>VI Damage Status:</label>
+            <span>-</span>
+          </div>
+          <div class="current-data-item">
+            <label>Test Result Desc:</label>
+            <span>-</span>
+          </div>
+          <div class="current-data-item">
+            <label>Replacment SN in TW:</label>
+            <span>-</span>
+          </div>
+          <div class="current-data-item">
+            <label>Replacment PN in TW:</label>
+            <span>-</span>
+          </div>
+          <div class="current-data-item">
+            <label>Replacment SKU# in TW:</label>
+            <span>-</span>
+          </div>
+          <div class="current-data-item">
+            <label>Replacement SN from HK:</label>
+            <span>-</span>
+          </div>
+          <div class="current-data-item">
+            <label>Replacement PN from HK:</label>
+            <span>-</span>
+          </div>
+          <div class="current-data-item">
+            <label>Replacement SKU# from HK:</label>
+            <span>-</span>
+          </div>
+          <div class="current-data-item">
+            <label>RMA board Test Result:</label>
+            <span>-</span>
+          </div>
+          <div class="current-data-item">
+            <label>End user invoice date:</label>
+            <span>-</span>
+          </div>
+          <div class="current-data-item">
+            <label>Warranty Until:</label>
+            <span>-</span>
+          </div>
+          <div class="current-data-item">
+            <label>Remark:</label>
+            <span>-</span>
+          </div>
+          <div class="current-data-item">
+            <label>產品線:</label>
+            <select style="padding: 5px 10px; width: 120px;">
+              <option value="">請選擇產品線</option>
+              <option value="graphics">顯示卡</option>
+              <option value="motherboard">主機板</option>
+              <option value="ssd">固態硬碟</option>
+              <option value="memory">記憶體</option>
+              <option value="power">電源供應器</option>
+            </select>
           </div>
         </div>
+        <button class="setup-btn">儲存</button>
       </div>
 
       <!-- 可替換零件區域 -->
       <div class="replacement-section">
-        <h3>顯示搜尋到的相關資料的備位內容(可勾選後把指定資料內容用這筆資料替代)</h3>
+        <h3>庫存</h3>
         <table>
           <thead>
             <tr>

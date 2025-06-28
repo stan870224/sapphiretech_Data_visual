@@ -68,6 +68,11 @@
       cursor: pointer;
     }
 
+    .sidebar button.active {
+      background-color: #ddd;
+      font-weight: bold;
+    }
+
     .content {
       padding: 20px 40px 40px 40px;
       max-width: none;
@@ -101,7 +106,7 @@
       margin-right: 5px;
     }
 
-    .form-group input {
+    .form-group input, .form-group select {
       padding: 5px 10px;
       width: 180px;
     }
@@ -233,9 +238,8 @@
   <div class="main">
     <!-- 側邊欄按鈕 -->
     <div class="sidebar">
-      <button onclick="location.href='select_page.html'">資料查詢</button>
-      <button onclick="location.href='insert_page.html'">新增資料</button>
-      <button onclick="location.href='update_page.html'">資料更新</button>
+      <button onclick="location.href='select_page.html'" class="active">資料查詢</button>
+      <button onclick="location.href='update_page.html'">資料調整</button>
     </div>
 
     <!-- 主顯示區 -->
@@ -255,6 +259,17 @@
         <div class="form-group">
           <label for="sku">SKU#<br>(可用掃碼):</label>
           <input type="text" id="sku">
+        </div>
+        <div class="form-group">
+          <label for="product-line">產品線:</label>
+          <select id="product-line">
+            <option value="">請選擇產品線</option>
+            <option value="graphics">顯示卡</option>
+            <option value="motherboard">主機板</option>
+            <option value="ssd">固態硬碟</option>
+            <option value="memory">記憶體</option>
+            <option value="power">電源供應器</option>
+          </select>
         </div>
 
         <!-- 換行 -->
