@@ -17,7 +17,7 @@
     .container {
       display: grid;
       grid-template-rows: 80px auto;
-      height: 100vh;
+      min-height: 100vh;
       border: 2px solid #000;
     }
 
@@ -41,6 +41,7 @@
       font-weight: bold;
       font-family: 'Orbitron', sans-serif;
       color: #ccc;
+      text-decoration: none;
     }
 
     .main {
@@ -67,9 +68,34 @@
       cursor: pointer;
     }
 
+    .sidebar button.active {
+      background-color: #ddd;
+      font-weight: bold;
+    }
+
     .content {
-      padding: 20px;
-      background-color: #ffffff;
+      padding: 20px 40px 40px 40px;
+      max-width: none;
+      margin: 0;
+    }
+
+    .content h2 {
+      margin-bottom: 40px;
+    }
+
+    .batch-button {
+      padding: 15px 30px;
+      border: 1px solid #000;
+      background-color: white;
+      cursor: pointer;
+      font-size: 16px;
+      margin: 20px 0;
+    }
+
+    .batch-text {
+      color: #666;
+      font-size: 14px;
+      margin-top: 10px;
     }
   </style>
   <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700&display=swap" rel="stylesheet">
@@ -79,7 +105,7 @@
 <div class="container">
   <!-- 頁首 -->
   <div class="header">
-    <div class="logo">SAPPHIRE</div>
+    <a href="index.html" class="logo">SAPPHIRE</a>
     <h1>Sapphire RMA Control</h1>
   </div>
 
@@ -87,16 +113,16 @@
   <div class="main">
     <!-- 側邊欄按鈕 -->
     <div class="sidebar">
-        <button onclick="location.href='select_page.html'">資料查詢</button>
-        <button onclick="location.href='update_page.html'">資料調整</button>
-        <button onclick="location.href='batch_execution.html'">批次執行</button>
+      <button onclick="location.href='select_page.html'">資料查詢</button>
+      <button onclick="location.href='update_page.html'">資料調整</button>
+      <button onclick="location.href='batch_execution.html'" class="active">批次執行</button>
     </div>
-
 
     <!-- 主顯示區 -->
     <div class="content">
-      <!-- 可以放表單、表格、報表等 -->
-      <p>歡迎使用 Sapphire RMA 系統</p>
+      <h2>批次執行</h2>
+      <button class="batch-button">批次執行</button>
+      <div class="batch-text">確認已將檔案放置正確路徑</div>
     </div>
   </div>
 </div>

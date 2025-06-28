@@ -205,6 +205,17 @@
       right: 20px;
     }
 
+    .add-btn {
+      padding: 8px 16px;
+      border: 1px solid #000;
+      background-color: white;
+      cursor: pointer;
+      font-size: 16px;
+      position: absolute;
+      bottom: 20px;
+      right: 100px;
+    }
+
 
   </style>
   <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700&display=swap" rel="stylesheet">
@@ -224,6 +235,7 @@
     <div class="sidebar">
       <button onclick="location.href='select_page.html'">資料查詢</button>
       <button onclick="location.href='update_page.html'" class="active">資料調整</button>
+      <button onclick="location.href='batch_execution.html'">批次執行</button>
     </div>
 
     <!-- 主顯示區 -->
@@ -260,7 +272,7 @@
 
       <!-- 當前資料顯示區域 -->
       <div class="current-data">
-        <h3>訂單資料</h3>
+        <h3>RMA 訂單資料</h3>
         <div class="current-data-content">
           <div class="current-data-item">
             <label>Rma No:</label>
@@ -362,7 +374,8 @@
             </select>
           </div>
         </div>
-        <button class="setup-btn">儲存</button>
+        <button class="add-btn">新增</button>
+        <button class="setup-btn">更新</button>
       </div>
 
       <!-- 可替換零件區域 -->
