@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8">
+  <title>Sapphire RMA Control</title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: "Segoe UI", sans-serif;
+      background-color: #f8f8f8;
+    }
+
+    .container {
+      display: grid;
+      grid-template-rows: 80px auto;
+      min-height: 100vh;
+      border: 2px solid #000;
+    }
+
+    .header {
+      display: flex;
+      align-items: center;
+      padding: 0 20px;
+      border-bottom: 2px solid #000;
+      background-color: #fff;
+    }
+
+    .header h1 {
+      font-size: 24px;
+      font-weight: normal;
+      margin: 0;
+      margin-left: 20px;
+    }
+
+    .header .logo {
+      font-size: 36px;
+      font-weight: bold;
+      font-family: 'Orbitron', sans-serif;
+      color: #ccc;
+      text-decoration: none;
+    }
+
+    .main {
+      display: grid;
+      grid-template-columns: 150px 1fr;
+      height: 100%;
+    }
+
+    .sidebar {
+      border-right: 2px solid #000;
+      background-color: #f2f2f2;
+      display: flex;
+      flex-direction: column;
+      align-items: stretch;
+      padding: 20px 10px;
+      gap: 15px;
+    }
+
+    .sidebar button {
+      padding: 10px;
+      font-size: 16px;
+      border: 1px solid #000;
+      background-color: white;
+      cursor: pointer;
+    }
+
+    .sidebar button.active {
+      background-color: #ddd;
+      font-weight: bold;
+    }
+
+    .content {
+      padding: 20px 40px 40px 40px;
+      max-width: none;
+      margin: 0;
+    }
+
+    .content h2 {
+      margin-bottom: 40px;
+    }
+
+    /* 新增產品線選擇區域樣式 */
+    .batch-controls {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      margin: 20px 0;
+    }
+
+    .batch-controls label {
+      font-weight: bold;
+      font-size: 16px;
+    }
+
+    .batch-controls select {
+      padding: 8px 12px;
+      font-size: 16px;
+      border: 1px solid #000;
+      background-color: white;
+      min-width: 150px;
+    }
+
+    .batch-button {
+      padding: 15px 30px;
+      border: 1px solid #000;
+      background-color: white;
+      cursor: pointer;
+      font-size: 16px;
+      margin: 0;
+    }
+
+    .batch-button:disabled {
+      background-color: #e0e0e0;
+      cursor: not-allowed;
+    }
+
+    .batch-text {
+      color: #666;
+      font-size: 14px;
+      margin-top: 10px;
+    }
+
+    /* 結果顯示區域的樣式 */
+    #result {
+      margin-top: 20px;
+      padding: 15px;
+      border: 1px solid #ccc;
+      background-color: #fff;
+      border-radius: 4px;
+    }
+
+    #result h3 {
+      margin-top: 0;
+    }
+
+    .loading {
+      color: blue;
+    }
+
+    .success {
+      color: green;
+    }
+
+    .error {
+      color: red;
+    }
+
+    .result-details {
+      margin-top: 15px;
+      padding: 15px;
+      background-color: #f9f9f9;
+      border-left: 3px solid #4CAF50;
+    }
+  </style>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+<div class="container">
+  <!-- 頁首 -->
+  <div class="header">
+    <a href="index.html" class="logo">SAPPHIRE</a>
+    <h1>Sapphire RMA Control</h1>
+  </div>
+
+  <!-- 主體區 -->
+  <div class="main">
+    <!-- 側邊欄按鈕 -->
+    <div class="sidebar">
+      <button onclick="location.href='select_page.html'">資料查詢</button>
+      <button onclick="location.href='update_page.html'">資料調整</button>
+      <button onclick="location.href='batch_execution.html'" class="active">批次執行</button>
+    </div>
+
+    <!-- 主顯示區 -->
+    <div class="content">
+      <h2>批次執行</h2>
+      
+      <!-- 產品線選擇 + 執行按鈕 -->
+      <div class="batch-controls">
+        <label for="productLine">產品線：</label>
+        <select id="productLine">
+          <option value="">請選擇產品線</option>
+          <option value="VGA">VGA</option>
+          <option value="MB">MB</option>
+          <option value="MiniPC">MiniPC</option>
+        </select>
+        <button class="batch-button" onclick="executeBatch()" id="batchBtn">批次執行</button>
+      </div>
+      
+      <div class="batch-text">確認已將檔案放置正確路徑</div>
+      
+      <!-- 結果顯示區域 -->
+      <div id="result" style="display: none;">
+        <h3>執行結果：</h3>
+        <div id="result-content"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  async function executeBatch() {
+    const productLine = document.getElementById('productLine').value;
+    const resultDiv = document.getElementById('result');
+    const resultContent = document.getElementById('result-content');
+    const batchBtn = document.getElementById('batchBtn');
+    
+    // 檢查是否選擇產品線
+    if (!productLine) {
+      alert('請選擇產品線！');
+      return;
+    }
+    
+    // 顯示載入中
+    resultDiv.style.display = 'block';
+    resultContent.innerHTML = `<p class="loading">⏳ 正在處理 ${productLine} 產品線資料，請稍候...</p>`;
+    batchBtn.disabled = true;
+    batchBtn.textContent = '處理中...';
+    
+    try {
+      // 呼叫 Python API
+      const response = await fetch('http://localhost:5000/batch-execute', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          product_type: productLine
+        })
+      });
+      
+      const data = await response.json();
+      
+      if (data.success) {
+        // 成功結果
+        resultContent.innerHTML = `
+          <p class="success">${data.message}</p>
+          <div class="result-details">
+            <h4>${data.product_type} 處理詳情：</h4>
+            <ul>
+              <li><strong>RMA 資料：</strong> ${data.rma_stats.message}</li>
+              <li><strong>庫存資料：</strong> ${data.stock_stats.message}</li>
+            </ul>
+            <p><strong>總處理筆數：</strong> ${data.rma_stats.total + data.stock_stats.total} 筆</p>
+          </div>
+        `;
+      } else {
+        // 失敗結果
+        let errorDetails = '';
+        if (data.details) {
+          errorDetails = `
+            <div style="margin-top: 10px; font-size: 14px; color: #666;">
+              <p>詳細錯誤：</p>
+              <ul>
+                <li>RMA: ${data.details.rma_error || '正常'}</li>
+                <li>庫存: ${data.details.stock_error || '正常'}</li>
+              </ul>
+            </div>
+          `;
+        }
+        resultContent.innerHTML = `
+          <p class="error">❌ ${data.message}</p>
+          ${errorDetails}
+        `;
+      }
+      
+    } catch (error) {
+      // 網路或其他錯誤
+      resultContent.innerHTML = `<p class="error">❌ 連線錯誤：${error.message}</p>`;
+    } finally {
+      // 恢復按鈕狀態
+      batchBtn.disabled = false;
+      batchBtn.textContent = '批次執行';
+    }
+  }
+</script>
+
+</body>
+</html>
