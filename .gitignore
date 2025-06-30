@@ -1,2 +1,3 @@
 #忽略data資料夾
 data/
+.DS_Store
