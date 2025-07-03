@@ -214,6 +214,44 @@ public class RmaRepository {
         Integer count = jdbcTemplate.queryForObject(sql, Integer.class, serialNo);
         return count != null && count > 0;
     }
-    
+
+    // 需要添加到 RmaRepository.java 中的方法
+
+    /**
+     * 根據產品線獲取庫存表名 (用於 updateRmaRecordWithStockDeletion 方法)
+     */
+    private String getStockTableName(String productType) {
+        return productType + "_buffer_stock";
+    }
+
+    /**
+     * 刪除 RMA 記錄
+     * @param productType 產品線 (必填)
+     * @param serialNo 序列號
+     */
+    public int deleteBySerialNo(String productType, String serialNo) {
+        if (productType == null || productType.trim().isEmpty()) {
+            throw new IllegalArgumentException("產品線為必填項");
+        }
+
+        String tableName = getRmaTableName(productType);
+        String sql = "DELETE FROM " + tableName + " WHERE Serial_No = ?";
+        return jdbcTemplate.update(sql, serialNo);
+    }
+
+    /**
+     * 統計 RMA 記錄數量
+     * @param productType 產品線 (必填)
+     */
+    public int countByProductType(String productType) {
+        if (productType == null || productType.trim().isEmpty()) {
+            throw new IllegalArgumentException("產品線為必填項");
+        }
+
+        String tableName = getRmaTableName(productType);
+        String sql = "SELECT COUNT(*) FROM " + tableName;
+        Integer count = jdbcTemplate.queryForObject(sql, Integer.class);
+        return count != null ? count : 0;
+    }
 
 }
