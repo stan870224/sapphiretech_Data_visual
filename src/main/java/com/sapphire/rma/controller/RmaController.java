@@ -1,4 +1,4 @@
-package main.java.com.sapphire.rma.controller;
+package com.sapphire.rma.controller;
 
 public class RmaController {
     

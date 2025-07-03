@@ -1,4 +1,4 @@
-package main.java.com.sapphire.rma.entity;
+package com.sapphire.rma.entity;
 
 public class MiniPcStockRecord {
     

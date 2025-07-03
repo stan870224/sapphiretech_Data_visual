@@ -1,4 +1,4 @@
-package main.java.com.sapphire.rma.repository;
+package com.sapphire.rma.repository;
 
 public class MiniPcStockRepository {
     

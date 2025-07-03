@@ -1,4 +1,4 @@
-package main.java.com.sapphire.rma.service;
+package com.sapphire.rma.service;
 
 public class StockService {
     
