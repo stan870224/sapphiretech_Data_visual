@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.InputStreamReader;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 @Service
@@ -54,6 +55,10 @@ public class PythonBatchService {
             
             // 設定工作目錄為專案根目錄
             processBuilder.directory(new File("."));
+
+            Map<String, String> env = processBuilder.environment();
+            env.put("PYTHONIOENCODING", "utf-8");
+            env.put("PYTHONLEGACYWINDOWSSTDIO", "utf-8");
             
             return executeProcess(processBuilder, productType);
             
@@ -127,13 +132,28 @@ public class PythonBatchService {
      */
     private BatchResult parseJsonResult(String jsonOutput, String productType) {
         try {
-            JsonNode jsonNode = objectMapper.readTree(jsonOutput);
-            
+            // 找到 JSON 開始位置（第一個 { ）
+            int jsonStart = jsonOutput.indexOf('{');
+            if (jsonStart == -1) {
+                return createErrorResult(productType, "無法找到有效的 JSON 輸出");
+            }
+
+            // 找到 JSON 結束位置（最後一個 } ）
+            int jsonEnd = jsonOutput.lastIndexOf('}');
+            if (jsonEnd == -1 || jsonEnd <= jsonStart) {
+                return createErrorResult(productType, "無法找到完整的 JSON 輸出");
+            }
+
+            // 提取純 JSON 部分
+            String pureJson = jsonOutput.substring(jsonStart, jsonEnd + 1);
+
+            JsonNode jsonNode = objectMapper.readTree(pureJson);
+
             BatchResult result = new BatchResult();
             result.setSuccess(jsonNode.get("success").asBoolean());
             result.setMessage(jsonNode.get("message").asText());
             result.setProductType(jsonNode.get("productType").asText());
-            
+
             if (jsonNode.has("rmaStats")) {
                 JsonNode rmaStats = jsonNode.get("rmaStats");
                 BatchStats rmaResult = new BatchStats();
@@ -143,7 +163,7 @@ public class PythonBatchService {
                 rmaResult.setMessage(rmaStats.get("message").asText());
                 result.setRmaStats(rmaResult);
             }
-            
+
             if (jsonNode.has("stockStats")) {
                 JsonNode stockStats = jsonNode.get("stockStats");
                 BatchStats stockResult = new BatchStats();
@@ -153,9 +173,9 @@ public class PythonBatchService {
                 stockResult.setMessage(stockStats.get("message").asText());
                 result.setStockStats(stockResult);
             }
-            
+
             return result;
-            
+
         } catch (Exception e) {
             return createErrorResult(productType, "解析處理結果失敗: " + e.getMessage());
         }

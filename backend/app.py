@@ -89,7 +89,7 @@ class BatchProcessor:
     
     def processRmaData(self, productType):
         """處理 RMA 資料"""
-        rmaFilePath = f'../data/{productType}_RMA_record.xlsx'
+        rmaFilePath = f'./data/{productType}_RMA_record.xlsx'
         
         if not os.path.exists(rmaFilePath):
             return None, f"找不到檔案: {productType}_RMA_record.xlsx"
@@ -97,7 +97,7 @@ class BatchProcessor:
         try:
             # 先讀取 Excel 檔案看工作表
             excelFile = pd.ExcelFile(rmaFilePath)
-            print(f"📋 {productType} 工作表名稱: {excelFile.sheet_names}")
+            print(f" {productType} 工作表名稱: {excelFile.sheet_names}")
             
             # 統一讀取 'TW RMA history' 頁籤
             if 'TW RMA history' in excelFile.sheet_names:
@@ -147,7 +147,7 @@ class BatchProcessor:
     
     def processStockData(self, productType):
         """處理庫存資料"""
-        stockFilePath = f'../data/{productType}_buffer_stock.xlsx'
+        stockFilePath = f'./data/{productType}_buffer_stock.xlsx'
         
         if not os.path.exists(stockFilePath):
             return None, f"找不到檔案: {productType}_buffer_stock.xlsx"

@@ -3,87 +3,16 @@
 <head>
   <meta charset="UTF-8">
   <title>Sapphire RMA Control</title>
+  
+  <!-- 引入共用樣式 -->
+  <link rel="stylesheet" href="css/common.css">
+  
+  <!-- 引入字型 -->
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700&display=swap" rel="stylesheet">
+  
+  <!-- 頁面專用樣式 -->
   <style>
-    * {
-      box-sizing: border-box;
-    }
-
-    body {
-      margin: 0;
-      font-family: "Segoe UI", sans-serif;
-      background-color: #f8f8f8;
-    }
-
-    .container {
-      display: grid;
-      grid-template-rows: 80px auto;
-      min-height: 100vh;
-      border: 2px solid #000;
-    }
-
-    .header {
-      display: flex;
-      align-items: center;
-      padding: 0 20px;
-      border-bottom: 2px solid #000;
-      background-color: #fff;
-    }
-
-    .header h1 {
-      font-size: 24px;
-      font-weight: normal;
-      margin: 0;
-      margin-left: 20px;
-    }
-
-    .header .logo {
-      font-size: 36px;
-      font-weight: bold;
-      font-family: 'Orbitron', sans-serif;
-      color: #ccc;
-      text-decoration: none;
-    }
-
-    .main {
-      display: grid;
-      grid-template-columns: 150px 1fr;
-      height: 100%;
-    }
-
-    .sidebar {
-      border-right: 2px solid #000;
-      background-color: #f2f2f2;
-      display: flex;
-      flex-direction: column;
-      align-items: stretch;
-      padding: 20px 10px;
-      gap: 15px;
-    }
-
-    .sidebar button {
-      padding: 10px;
-      font-size: 16px;
-      border: 1px solid #000;
-      background-color: white;
-      cursor: pointer;
-    }
-
-    .sidebar button.active {
-      background-color: #ddd;
-      font-weight: bold;
-    }
-
-    .content {
-      padding: 20px 40px 40px 40px;
-      max-width: none;
-      margin: 0;
-    }
-
-    .content h2 {
-      margin-bottom: 40px;
-    }
-
-    /* 新增產品線選擇區域樣式 */
+    /* 批次控制區域樣式 */
     .batch-controls {
       display: flex;
       align-items: center;
@@ -104,28 +33,14 @@
       min-width: 150px;
     }
 
-    .batch-button {
-      padding: 15px 30px;
-      border: 1px solid #000;
-      background-color: white;
-      cursor: pointer;
-      font-size: 16px;
-      margin: 0;
-    }
-
-    .batch-button:disabled {
-      background-color: #e0e0e0;
-      cursor: not-allowed;
-    }
-
     .batch-text {
       color: #666;
       font-size: 14px;
       margin-top: 10px;
     }
 
-    /* 結果顯示區域的樣式 */
-    #result {
+    /* 結果顯示區域樣式 */
+    .result-section {
       margin-top: 20px;
       padding: 15px;
       border: 1px solid #ccc;
@@ -133,20 +48,8 @@
       border-radius: 4px;
     }
 
-    #result h3 {
+    .result-section h3 {
       margin-top: 0;
-    }
-
-    .loading {
-      color: blue;
-    }
-
-    .success {
-      color: green;
-    }
-
-    .error {
-      color: red;
     }
 
     .result-details {
@@ -155,129 +58,366 @@
       background-color: #f9f9f9;
       border-left: 3px solid #4CAF50;
     }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 15px;
+      margin-top: 15px;
+    }
+
+    .stat-card {
+      padding: 15px;
+      background-color: #fff;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+    }
+
+    .stat-card h4 {
+      margin: 0 0 10px 0;
+      color: #333;
+    }
+
+    .stat-number {
+      font-size: 24px;
+      font-weight: bold;
+      color: #007bff;
+    }
   </style>
-  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700&display=swap" rel="stylesheet">
 </head>
 <body>
 
-<div class="container">
-  <!-- 頁首 -->
-  <div class="header">
-    <a href="index.html" class="logo">SAPPHIRE</a>
-    <h1>Sapphire RMA Control</h1>
-  </div>
+<div id="app">
+  <div class="container">
+    
+    <!-- 頁首組件 -->
+    <app-header></app-header>
 
-  <!-- 主體區 -->
-  <div class="main">
-    <!-- 側邊欄按鈕 -->
-    <div class="sidebar">
-      <button onclick="location.href='select_page.html'">資料查詢</button>
-      <button onclick="location.href='update_page.html'">資料調整</button>
-      <button onclick="location.href='batch_execution.html'" class="active">批次執行</button>
-    </div>
+    <!-- 主體區 -->
+    <div class="main">
+      
+      <!-- 側邊欄組件 -->
+      <app-sidebar 
+        :current-page="currentPage" 
+        @page-change="changePage">
+      </app-sidebar>
 
-    <!-- 主顯示區 -->
-    <div class="content">
-      <h2>批次執行</h2>
-      
-      <!-- 產品線選擇 + 執行按鈕 -->
-      <div class="batch-controls">
-        <label for="productLine">產品線：</label>
-        <select id="productLine">
-          <option value="">請選擇產品線</option>
-          <option value="VGA">VGA</option>
-          <option value="MB">MB</option>
-          <option value="MiniPC">MiniPC</option>
-        </select>
-        <button class="batch-button" onclick="executeBatch()" id="batchBtn">批次執行</button>
-      </div>
-      
-      <div class="batch-text">確認已將檔案放置正確路徑</div>
-      
-      <!-- 結果顯示區域 -->
-      <div id="result" style="display: none;">
-        <h3>執行結果：</h3>
-        <div id="result-content"></div>
+      <!-- 主顯示區 -->
+      <div class="content">
+        <h2>批次執行</h2>
+        
+        <!-- 訊息顯示 -->
+        <app-message :message="message"></app-message>
+        
+        <!-- 批次控制區域 -->
+        <div class="batch-controls">
+          <label for="productLine">產品線：</label>
+          <select 
+            id="productLine" 
+            v-model="selectedProductLine"
+            :disabled="batchLoading">
+            <option value="">請選擇產品線</option>
+            <option 
+              v-for="productLine in productLines" 
+              :key="productLine" 
+              :value="productLine">
+              {{ productLine }}
+            </option>
+          </select>
+          
+          <button 
+            class="btn primary"
+            @click="executeBatch"
+            :disabled="batchLoading || !selectedProductLine">
+            <loading-spinner v-if="batchLoading"></loading-spinner>
+            {{ batchLoading ? '處理中...' : '批次執行' }}
+          </button>
+          
+          <button 
+            class="btn"
+            @click="checkHealth"
+            :disabled="loading">
+            健康檢查
+          </button>
+        </div>
+        
+        <div class="batch-text">確認已將檔案放置正確路徑</div>
+        
+        <!-- 結果顯示區域 -->
+        <div v-if="batchResult" class="result-section">
+          <h3>執行結果</h3>
+          
+          <!-- 成功結果 -->
+          <div v-if="batchResult.success" class="message success">
+            {{ batchResult.message }}
+          </div>
+          
+          <!-- 失敗結果 -->
+          <div v-else class="message error">
+            {{ batchResult.message }}
+          </div>
+          
+          <!-- 詳細統計 -->
+          <div v-if="batchResult.success && (batchResult.rmaStats || batchResult.stockStats)" class="result-details">
+            <h4>{{ batchResult.productType }} 處理詳情</h4>
+            
+            <div class="stats-grid">
+              <!-- RMA 統計 -->
+              <div v-if="batchResult.rmaStats" class="stat-card">
+                <h4>RMA 資料</h4>
+                <div class="stat-number">{{ batchResult.rmaStats.total }}</div>
+                <div>總處理筆數</div>
+                <hr>
+                <div>新增: {{ batchResult.rmaStats.inserted }} 筆</div>
+                <div>更新: {{ batchResult.rmaStats.updated }} 筆</div>
+              </div>
+              
+              <!-- 庫存統計 -->
+              <div v-if="batchResult.stockStats" class="stat-card">
+                <h4>庫存資料</h4>
+                <div class="stat-number">{{ batchResult.stockStats.total }}</div>
+                <div>總處理筆數</div>
+                <hr>
+                <div>新增: {{ batchResult.stockStats.inserted }} 筆</div>
+                <div>更新: {{ batchResult.stockStats.updated }} 筆</div>
+              </div>
+            </div>
+            
+            <div style="margin-top: 15px;">
+              <strong>總計處理筆數：</strong> 
+              {{ (batchResult.rmaStats?.total || 0) + (batchResult.stockStats?.total || 0) }} 筆
+            </div>
+          </div>
+          
+          <!-- 錯誤詳情 -->
+          <div v-if="!batchResult.success && batchResult.details" class="result-details">
+            <h4>錯誤詳情</h4>
+            <ul>
+              <li v-if="batchResult.details.rmaError">
+                <strong>RMA:</strong> {{ batchResult.details.rmaError }}
+              </li>
+              <li v-if="batchResult.details.stockError">
+                <strong>庫存:</strong> {{ batchResult.details.stockError }}
+              </li>
+            </ul>
+          </div>
+        </div>
+        
+        <!-- 產品線管理區域 -->
+        <div style="margin-top: 40px; padding-top: 20px; border-top: 1px solid #ddd;">
+          <h3>產品線管理</h3>
+          
+          <div style="display: flex; gap: 10px; align-items: center;">
+            <button 
+              class="btn"
+              @click="loadProductLines"
+              :disabled="loading">
+              <loading-spinner v-if="loading"></loading-spinner>
+              重新載入產品線
+            </button>
+            
+            <button 
+              class="btn"
+              @click="initProductLines"
+              :disabled="loading">
+              初始化產品線
+            </button>
+            
+            <span v-if="productLines.length > 0" style="color: #666;">
+              目前有 {{ productLines.length }} 個產品線
+            </span>
+          </div>
+        </div>
       </div>
     </div>
   </div>
 </div>
 
+<!-- 引入 Vue.js -->
+<script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+
+<!-- 引入 API 服務 -->
+<script src="js/api.js"></script>
+
+<!-- Vue.js 應用 -->
 <script>
-  async function executeBatch() {
-    const productLine = document.getElementById('productLine').value;
-    const resultDiv = document.getElementById('result');
-    const resultContent = document.getElementById('result-content');
-    const batchBtn = document.getElementById('batchBtn');
-    
-    // 檢查是否選擇產品線
-    if (!productLine) {
-      alert('請選擇產品線！');
-      return;
-    }
-    
-    // 顯示載入中
-    resultDiv.style.display = 'block';
-    resultContent.innerHTML = `<p class="loading">⏳ 正在處理 ${productLine} 產品線資料，請稍候...</p>`;
-    batchBtn.disabled = true;
-    batchBtn.textContent = '處理中...';
-    
-    try {
-      // 呼叫 Python API
-      const response = await fetch('http://localhost:5000/batch-execute', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          product_type: productLine
-        })
-      });
-      
-      const data = await response.json();
-      
-      if (data.success) {
-        // 成功結果
-        resultContent.innerHTML = `
-          <p class="success">${data.message}</p>
-          <div class="result-details">
-            <h4>${data.product_type} 處理詳情：</h4>
-            <ul>
-              <li><strong>RMA 資料：</strong> ${data.rma_stats.message}</li>
-              <li><strong>庫存資料：</strong> ${data.stock_stats.message}</li>
-            </ul>
-            <p><strong>總處理筆數：</strong> ${data.rma_stats.total + data.stock_stats.total} 筆</p>
-          </div>
-        `;
-      } else {
-        // 失敗結果
-        let errorDetails = '';
-        if (data.details) {
-          errorDetails = `
-            <div style="margin-top: 10px; font-size: 14px; color: #666;">
-              <p>詳細錯誤：</p>
-              <ul>
-                <li>RMA: ${data.details.rma_error || '正常'}</li>
-                <li>庫存: ${data.details.stock_error || '正常'}</li>
-              </ul>
-            </div>
-          `;
+const { createApp } = Vue;
+
+createApp({
+  data() {
+    return {
+      currentPage: 'batch',
+      productLines: [],
+      selectedProductLine: '',
+      loading: false,
+      batchLoading: false,
+      message: null,
+      batchResult: null
+    };
+  },
+
+  async mounted() {
+    await this.loadProductLines();
+  },
+
+  methods: {
+    // 載入產品線列表
+    async loadProductLines() {
+      try {
+        this.loading = true;
+        this.message = null;
+        const productLines = await api.batch.getProductLines();
+        this.productLines = productLines;
+        
+        if (productLines.length === 0) {
+          this.showMessage('沒有找到產品線，請先初始化', 'info');
         }
-        resultContent.innerHTML = `
-          <p class="error">❌ ${data.message}</p>
-          ${errorDetails}
-        `;
+      } catch (error) {
+        this.showMessage('載入產品線失敗: ' + error.message, 'error');
+      } finally {
+        this.loading = false;
       }
+    },
+
+    // 初始化產品線
+    async initProductLines() {
+      try {
+        this.loading = true;
+        const result = await api.batch.initProductLines();
+        this.showMessage(result.message, 'success');
+        await this.loadProductLines();
+      } catch (error) {
+        this.showMessage('初始化失敗: ' + error.message, 'error');
+      } finally {
+        this.loading = false;
+      }
+    },
+
+    // 執行批次處理
+    async executeBatch() {
+      if (!this.selectedProductLine) {
+        this.showMessage('請選擇產品線', 'error');
+        return;
+      }
+
+      try {
+        this.batchLoading = true;
+        this.batchResult = null;
+        this.message = null;
+        
+        this.showMessage(`正在處理 ${this.selectedProductLine} 產品線資料，請稍候...`, 'info');
+        
+        const result = await api.batch.execute(this.selectedProductLine);
+        this.batchResult = result;
+        
+        if (result.success) {
+          this.showMessage('批次處理完成！', 'success');
+        } else {
+          this.showMessage('批次處理失敗', 'error');
+        }
+        
+      } catch (error) {
+        this.showMessage('執行失敗: ' + error.message, 'error');
+      } finally {
+        this.batchLoading = false;
+      }
+    },
+
+    // 健康檢查
+    async checkHealth() {
+      try {
+        const health = await api.batch.health();
+        this.showMessage(`服務正常運行，產品線數量: ${health.productLineCount}`, 'success');
+      } catch (error) {
+        this.showMessage('服務檢查失敗: ' + error.message, 'error');
+      }
+    },
+
+    // 切換頁面
+    changePage(page) {
+      this.currentPage = page;
+      this.message = null;
       
-    } catch (error) {
-      // 網路或其他錯誤
-      resultContent.innerHTML = `<p class="error">❌ 連線錯誤：${error.message}</p>`;
-    } finally {
-      // 恢復按鈕狀態
-      batchBtn.disabled = false;
-      batchBtn.textContent = '批次執行';
+      // 簡單的頁面跳轉
+      const pages = {
+        'select': 'select_page.html',
+        'update': 'update_page.html',
+        'batch': 'batch_execution.html'
+      };
+      
+      if (pages[page] && page !== 'batch') {
+        window.location.href = pages[page];
+      }
+    },
+
+    // 顯示訊息
+    showMessage(text, type = 'info') {
+      this.message = { text, type };
+      
+      // 3秒後自動隱藏
+      setTimeout(() => {
+        if (this.message && this.message.text === text) {
+          this.message = null;
+        }
+      }, 3000);
+    }
+  },
+
+  // 組件
+  components: {
+    // Header 組件
+    'app-header': {
+      template: `
+        <div class="header">
+          <a href="index.html" class="logo">SAPPHIRE</a>
+          <h1>Sapphire RMA Control</h1>
+        </div>
+      `
+    },
+
+    // Sidebar 組件
+    'app-sidebar': {
+      props: ['currentPage'],
+      emits: ['page-change'],
+      template: `
+        <div class="sidebar">
+          <button 
+            :class="{ active: currentPage === 'select' }"
+            @click="$emit('page-change', 'select')">
+            資料查詢
+          </button>
+          <button 
+            :class="{ active: currentPage === 'update' }"
+            @click="$emit('page-change', 'update')">
+            資料調整
+          </button>
+          <button 
+            :class="{ active: currentPage === 'batch' }"
+            @click="$emit('page-change', 'batch')">
+            批次執行
+          </button>
+        </div>
+      `
+    },
+
+    // 訊息組件
+    'app-message': {
+      props: ['message'],
+      template: `
+        <div v-if="message" :class="['message', message.type]">
+          {{ message.text }}
+        </div>
+      `
+    },
+
+    // 載入指示器組件
+    'loading-spinner': {
+      template: `
+        <div class="loading"></div>
+      `
     }
   }
+}).mount('#app');
 </script>
 
 </body>
