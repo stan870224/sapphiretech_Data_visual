@@ -2,104 +2,129 @@
 <html lang="zh-Hant">
 <head>
   <meta charset="UTF-8">
-  <title>Sapphire RMA Control</title>
-  <style>
-    * {
-      box-sizing: border-box;
-    }
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sapphire RMA Control System</title>
+  
+  <!-- 引入字型 -->
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700&display=swap" rel="stylesheet">
+  
+  <!-- 引入共用樣式 -->
+  <link rel="stylesheet" href="css/common.css">
+  <link rel="stylesheet" href="css/components.css">
+  
+  <!-- Vue.js 3 CDN -->
+  <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+  
+  <!-- Vue Router CDN -->
+  <script src="https://unpkg.com/vue-router@4/dist/vue-router.global.js"></script>
+</head>
+<body>
+  <!-- Vue 應用掛載點 -->
+  <div id="app">
+    <!-- 載入中指示器 -->
+    <div v-if="loading" class="loading-container">
+      <div class="loading-spinner"></div>
+      <p>系統載入中...</p>
+    </div>
+    
+    <!-- 主要應用內容 -->
+    <div v-else class="app-container">
+      <div class="container">
+        <!-- 頁首 -->
+        <app-header></app-header>
 
-    body {
-      margin: 0;
-      font-family: "Segoe UI", sans-serif;
+        <!-- 主體區 -->
+        <div class="main">
+          <!-- 側邊欄 -->
+          <app-sidebar 
+            :current-route="currentRoute"
+            @navigate="handleNavigation">
+          </app-sidebar>
+
+          <!-- 主顯示區 -->
+          <div class="content">
+            <!-- 全域訊息顯示 -->
+            <message-alert 
+              v-if="globalMessage" 
+              :message="globalMessage"
+              @close="clearGlobalMessage">
+            </message-alert>
+            
+            <!-- 路由視圖 -->
+            <router-view 
+              :key="$route.fullPath"
+              @show-message="showGlobalMessage">
+            </router-view>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 引入 API 服務 -->
+  <script src="js/api.js"></script>
+  
+  <!-- 引入 Vue 組件 -->
+  <script src="components/layout/Header.js"></script>
+  <script src="components/layout/Sidebar.js"></script>
+  <script src="components/common/MessageAlert.js"></script>
+  <script src="components/common/LoadingSpinner.js"></script>
+  
+  <!-- 引入頁面組件 -->
+  <script src="components/pages/DataQuery.js"></script>
+  <script src="components/pages/DataUpdate.js"></script>
+  <script src="components/pages/BatchExecution.js"></script>
+  
+  <!-- 引入主應用 -->
+  <script src="js/app.js"></script>
+
+  <style>
+    /* 載入頁面樣式 */
+    .loading-container {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
       background-color: #f8f8f8;
     }
 
-    .container {
-      display: grid;
-      grid-template-rows: 80px auto;
-      height: 100vh;
-      border: 2px solid #000;
+    .loading-spinner {
+      width: 50px;
+      height: 50px;
+      border: 5px solid #f3f3f3;
+      border-top: 5px solid #007bff;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      margin-bottom: 20px;
     }
 
-    .header {
-      display: flex;
-      align-items: center;
-      padding: 0 20px;
-      border-bottom: 2px solid #000;
-      background-color: #fff;
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
     }
 
-    .header h1 {
-      font-size: 24px;
-      font-weight: normal;
+    .loading-container p {
+      font-size: 18px;
+      color: #666;
       margin: 0;
-      margin-left: 20px;
     }
 
-    .header .logo {
-      font-size: 36px;
-      font-weight: bold;
-      font-family: 'Orbitron', sans-serif;
-      color: #ccc;
+    /* 應用容器樣式 */
+    .app-container {
+      min-height: 100vh;
     }
 
-    .main {
-      display: grid;
-      grid-template-columns: 150px 1fr;
-      height: 100%;
+    /* 確保路由切換動畫 */
+    .router-fade-enter-active,
+    .router-fade-leave-active {
+      transition: opacity 0.3s ease;
     }
 
-    .sidebar {
-      border-right: 2px solid #000;
-      background-color: #f2f2f2;
-      display: flex;
-      flex-direction: column;
-      align-items: stretch;
-      padding: 20px 10px;
-      gap: 15px;
-    }
-
-    .sidebar button {
-      padding: 10px;
-      font-size: 16px;
-      border: 1px solid #000;
-      background-color: white;
-      cursor: pointer;
-    }
-
-    .content {
-      padding: 20px;
-      background-color: #ffffff;
+    .router-fade-enter-from,
+    .router-fade-leave-to {
+      opacity: 0;
     }
   </style>
-  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700&display=swap" rel="stylesheet">
-</head>
-<body>
-
-<div class="container">
-  <!-- 頁首 -->
-  <div class="header">
-    <div class="logo">SAPPHIRE</div>
-    <h1>Sapphire RMA Control</h1>
-  </div>
-
-  <!-- 主體區 -->
-  <div class="main">
-    <!-- 側邊欄按鈕 -->
-    <div class="sidebar">
-        <button onclick="location.href='select_page.html'">資料查詢</button>
-        <button onclick="location.href='update_page.html'">資料調整</button>
-        <button onclick="location.href='batch_execution.html'">批次執行</button>
-    </div>
-
-
-    <!-- 主顯示區 -->
-    <div class="content">
-      <!-- 可以放表單、表格、報表等 -->
-      <p>歡迎使用 Sapphire RMA 系統</p>
-    </div>
-  </div>
-</div>
-
 </body>
 </html>
