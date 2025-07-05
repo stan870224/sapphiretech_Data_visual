@@ -6,38 +6,43 @@ const { createRouter, createWebHashHistory } = VueRouter;
 const routes = [
   {
     path: '/',
-    redirect: '/batch-execution' // 預設導向批次執行頁面
+    redirect: '/data-query' // 改為預設導向資料查詢頁面
   },
   {
     path: '/data-query',
     name: 'DataQuery',
-    component: () => DataQuery, // 資料查詢頁面
+    component: DataQuery, // 移除箭頭函數，直接引用組件
     meta: {
-      title: '資料查詢',
-      icon: '🔍'
+      title: '資料查詢'
     }
   },
   {
     path: '/data-update',
     name: 'DataUpdate', 
-    component: () => DataUpdate, // 資料調整頁面
+    component: DataUpdate, // 移除箭頭函數，直接引用組件
     meta: {
-      title: '資料調整',
-      icon: '✏️'
+      title: '資料調整'
     }
   },
   {
     path: '/batch-execution',
     name: 'BatchExecution',
-    component: () => BatchExecution, // 批次執行頁面
+    component: BatchExecution, // 移除箭頭函數，直接引用組件
     meta: {
-      title: '批次執行',
-      icon: '⚡'
+      title: '批次執行'
+    }
+  },
+  {
+    path: '/file-upload',
+    name: 'FileUpload',
+    component: FileUpload, // 新增檔案上傳頁面
+    meta: {
+      title: '檔案上傳'
     }
   },
   {
     path: '/:pathMatch(.*)*',
-    redirect: '/batch-execution' // 404 重導向
+    redirect: '/data-query' // 改為導向資料查詢
   }
 ];
 
@@ -334,6 +339,8 @@ app.use(router);
 app.component('AppHeader', AppHeader);
 app.component('AppSidebar', AppSidebar);
 app.component('MessageAlert', MessageAlert);
+app.component('LoadingSpinner', LoadingSpinner);
+app.component('DataTable', DataTable);
 
 // 全域屬性
 app.config.globalProperties.$api = typeof api !== 'undefined' ? api : null;

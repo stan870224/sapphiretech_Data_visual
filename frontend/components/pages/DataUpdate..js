@@ -30,7 +30,10 @@ const DataUpdate = {
             </option>
           </select>
         </div>
-        <button class="button" @click="searchForUpdate" :disabled="!searchForm.productType">查詢</button>
+        <button class="button" @click="searchForUpdate" :disabled="loading || !searchForm.productType">
+          <span v-if="loading" class="loading-spinner"></span>
+          查詢
+        </button>
       </div>
 
       <!-- 當前資料顯示區域 -->
@@ -39,47 +42,47 @@ const DataUpdate = {
         <div class="current-data-content">
           <div class="current-data-item">
             <label>Rma No:</label>
-            <input type="text" v-model="rmaData.rmaNo" />
+            <input type="text" v-model="rmaData.rmaNo" :disabled="loading" />
           </div>
           <div class="current-data-item">
             <label>Customer Name:</label>
-            <input type="text" v-model="rmaData.customerName" />
+            <input type="text" v-model="rmaData.customerName" :disabled="loading" />
           </div>
           <div class="current-data-item">
             <label>Serial No:</label>
-            <input type="text" v-model="rmaData.serialNo" :disabled="mode === 'update'" />
+            <input type="text" v-model="rmaData.serialNo" :disabled="loading || mode === 'update'" />
           </div>
           <div class="current-data-item">
             <label>Part No:</label>
-            <input type="text" v-model="rmaData.pn" />
+            <input type="text" v-model="rmaData.pn" :disabled="loading" />
           </div>
           <div class="current-data-item">
             <label>SKU#:</label>
-            <input type="text" v-model="rmaData.sku" />
+            <input type="text" v-model="rmaData.sku" :disabled="loading" />
           </div>
           <div class="current-data-item">
             <label>Product Name:</label>
-            <input type="text" v-model="rmaData.productName" />
+            <input type="text" v-model="rmaData.productName" :disabled="loading" />
           </div>
           <div class="current-data-item">
             <label>Sell/Ship Date:</label>
-            <input type="date" v-model="rmaData.sellShipDate" />
+            <input type="date" v-model="rmaData.sellShipDate" :disabled="loading" />
           </div>
           <div class="current-data-item">
             <label>Create Date:</label>
-            <input type="date" v-model="rmaData.createDate" />
+            <input type="date" v-model="rmaData.createDate" :disabled="loading" />
           </div>
           <div class="current-data-item">
             <label>Return Date:</label>
-            <input type="date" v-model="rmaData.returnDate" />
+            <input type="date" v-model="rmaData.returnDate" :disabled="loading" />
           </div>
           <div class="current-data-item">
             <label>Failure desc:</label>
-            <input type="text" v-model="rmaData.failureDesc" />
+            <input type="text" v-model="rmaData.failureDesc" :disabled="loading" />
           </div>
           <div class="current-data-item">
             <label>VI Damage Status:</label>
-            <select v-model="rmaData.viDamageStatus">
+            <select v-model="rmaData.viDamageStatus" :disabled="loading">
               <option value="">請選擇</option>
               <option value="是">是</option>
               <option value="否">否</option>
@@ -87,51 +90,51 @@ const DataUpdate = {
           </div>
           <div class="current-data-item">
             <label>Test Result Desc:</label>
-            <input type="text" v-model="rmaData.testResultDesc" />
+            <input type="text" v-model="rmaData.testResultDesc" :disabled="loading" />
           </div>
           <div class="current-data-item">
             <label>Replacement SN in TW:</label>
-            <input type="text" v-model="rmaData.replacementSnInTw" />
+            <input type="text" v-model="rmaData.replacementSnInTw" :disabled="loading" />
           </div>
           <div class="current-data-item">
             <label>Replacement PN in TW:</label>
-            <input type="text" v-model="rmaData.replacementPnInTw" />
+            <input type="text" v-model="rmaData.replacementPnInTw" :disabled="loading" />
           </div>
           <div class="current-data-item">
             <label>Replacement SKU# in TW:</label>
-            <input type="text" v-model="rmaData.replacementSkuInTw" />
+            <input type="text" v-model="rmaData.replacementSkuInTw" :disabled="loading" />
           </div>
           <div class="current-data-item">
             <label>Replacement SN from HK:</label>
-            <input type="text" v-model="rmaData.replacementSnFromHk" />
+            <input type="text" v-model="rmaData.replacementSnFromHk" :disabled="loading" />
           </div>
           <div class="current-data-item">
             <label>Replacement PN from HK:</label>
-            <input type="text" v-model="rmaData.replacementPnFromHk" />
+            <input type="text" v-model="rmaData.replacementPnFromHk" :disabled="loading" />
           </div>
           <div class="current-data-item">
             <label>Replacement SKU# from HK:</label>
-            <input type="text" v-model="rmaData.replacementSkuFromHk" />
+            <input type="text" v-model="rmaData.replacementSkuFromHk" :disabled="loading" />
           </div>
           <div class="current-data-item">
             <label>RMA board Test Result:</label>
-            <input type="text" v-model="rmaData.rmaBoardTestResult" />
+            <input type="text" v-model="rmaData.rmaBoardTestResult" :disabled="loading" />
           </div>
           <div class="current-data-item">
             <label>End user invoice date:</label>
-            <input type="date" v-model="rmaData.endUserInvoiceDate" />
+            <input type="date" v-model="rmaData.endUserInvoiceDate" :disabled="loading" />
           </div>
           <div class="current-data-item">
             <label>Warranty Until:</label>
-            <input type="date" v-model="rmaData.warrantyUntil" />
+            <input type="date" v-model="rmaData.warrantyUntil" :disabled="loading" />
           </div>
           <div class="current-data-item">
             <label>Remark:</label>
-            <input type="text" v-model="rmaData.remark" />
+            <input type="text" v-model="rmaData.remark" :disabled="loading" />
           </div>
           <div class="current-data-item">
             <label>產品線:</label>
-            <select v-model="rmaData.productType">
+            <select v-model="rmaData.productType" :disabled="loading">
               <option value="">請選擇產品線</option>
               <option 
                 v-for="productLine in productLines" 
@@ -142,8 +145,14 @@ const DataUpdate = {
             </select>
           </div>
         </div>
-        <button class="add-btn" @click="createRecord" :disabled="!canCreate">新增</button>
-        <button class="setup-btn" @click="updateRecord" :disabled="!canUpdate">更新</button>
+        <button class="add-btn" @click="createRecord" :disabled="!canCreate || loading">
+          <span v-if="loading && operationType === 'create'" class="loading-spinner"></span>
+          新增
+        </button>
+        <button class="setup-btn" @click="updateRecord" :disabled="!canUpdate || loading">
+          <span v-if="loading && operationType === 'update'" class="loading-spinner"></span>
+          更新
+        </button>
       </div>
 
       <!-- 可替換零件區域 -->
@@ -160,13 +169,18 @@ const DataUpdate = {
             </tr>
           </thead>
           <tbody>
+            <tr v-if="stockData.length === 0">
+              <td colspan="5" style="text-align: center; padding: 20px;">
+                {{ searchForm.productType ? '沒有庫存資料' : '請先選擇產品線並查詢' }}
+              </td>
+            </tr>
             <tr v-for="stock in stockData" :key="stock.Serial_No">
               <td>
                 <input 
-                  type="checkbox" 
+                  type="radio" 
                   v-model="selectedStock" 
                   :value="stock.Serial_No"
-                  @change="selectStock(stock)">
+                  name="stockSelect">
               </td>
               <td>{{ stock.Prodcut_name || '-' }}</td>
               <td>{{ stock.PN || '-' }}</td>
@@ -175,7 +189,9 @@ const DataUpdate = {
             </tr>
           </tbody>
         </table>
-        <button class="update-btn" @click="replaceWithStock" :disabled="!selectedStock">更換</button>
+        <button class="update-btn" @click="replaceWithStock" :disabled="!selectedStock || loading">
+          更換
+        </button>
         <div style="clear: both;"></div>
       </div>
     </div>
@@ -183,6 +199,8 @@ const DataUpdate = {
   
   data() {
     return {
+      loading: false,
+      operationType: null, // 'create' or 'update'
       productLines: [],
       searchForm: {
         productType: '',
@@ -267,6 +285,8 @@ const DataUpdate = {
       }
       
       try {
+        this.loading = true;
+        
         const params = new URLSearchParams();
         params.append('productType', this.searchForm.productType);
         if (this.searchForm.serialNo) params.append('serialNo', this.searchForm.serialNo);
@@ -299,6 +319,8 @@ const DataUpdate = {
           type: 'error',
           text: '查詢失敗: ' + error.message
         });
+      } finally {
+        this.loading = false;
       }
     },
     
@@ -358,14 +380,6 @@ const DataUpdate = {
       };
     },
     
-    selectStock(stock) {
-      if (this.selectedStock === stock.Serial_No) {
-        this.selectedStock = null;
-      } else {
-        this.selectedStock = stock.Serial_No;
-      }
-    },
-    
     replaceWithStock() {
       if (!this.selectedStock) return;
       
@@ -385,6 +399,9 @@ const DataUpdate = {
     
     async createRecord() {
       try {
+        this.loading = true;
+        this.operationType = 'create';
+        
         const response = await fetch('http://localhost:8080/api/rma/create', {
           method: 'POST',
           headers: {
@@ -412,11 +429,17 @@ const DataUpdate = {
           type: 'error',
           text: '新增失敗: ' + error.message
         });
+      } finally {
+        this.loading = false;
+        this.operationType = null;
       }
     },
     
     async updateRecord() {
       try {
+        this.loading = true;
+        this.operationType = 'update';
+        
         const updateData = {
           ...this.rmaData,
           stockSerialNoToDelete: this.selectedStock
@@ -454,6 +477,9 @@ const DataUpdate = {
           type: 'error',
           text: '更新失敗: ' + error.message
         });
+      } finally {
+        this.loading = false;
+        this.operationType = null;
       }
     },
     

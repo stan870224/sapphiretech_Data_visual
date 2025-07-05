@@ -39,12 +39,15 @@ const DataQuery = {
           <input type="date" id="end-date" v-model="searchForm.endDate">
         </div>
 
-        <button class="button" @click="searchData" :disabled="!searchForm.productType">查詢</button>
+        <button class="button" @click="searchData" :disabled="loading || !searchForm.productType">
+          <span v-if="loading" class="loading-spinner"></span>
+          查詢
+        </button>
       </div>
 
       <!-- RMA 表格 -->
       <h3>RMA Record</h3>
-      <div class="table-wrapper" v-if="searchResults">
+      <div v-if="searchResults && searchResults.success" class="table-wrapper">
         <table>
           <thead>
             <tr>
@@ -73,6 +76,11 @@ const DataQuery = {
             </tr>
           </thead>
           <tbody>
+            <tr v-if="searchResults.rmaRecords.length === 0">
+              <td colspan="22" style="text-align: center; padding: 20px;">
+                沒有找到符合條件的記錄
+              </td>
+            </tr>
             <tr v-for="record in searchResults.rmaRecords" :key="record.Serial_No">
               <td>{{ record.Rma_No || '-' }}</td>
               <td>{{ record.Customer_Name || '-' }}</td>
@@ -105,6 +113,7 @@ const DataQuery = {
   
   data() {
     return {
+      loading: false,
       productLines: [],
       searchForm: {
         productType: '',
@@ -138,7 +147,17 @@ const DataQuery = {
     },
     
     async searchData() {
+      if (!this.searchForm.productType) {
+        this.$emit('show-message', {
+          type: 'warning',
+          text: '請選擇產品線'
+        });
+        return;
+      }
+
       try {
+        this.loading = true;
+        
         const searchParams = {
           productType: this.searchForm.productType,
           serialNo: this.searchForm.serialNo || null,
@@ -156,12 +175,19 @@ const DataQuery = {
             type: 'success',
             text: `找到 ${result.totalCount} 筆記錄`
           });
+        } else {
+          this.$emit('show-message', {
+            type: 'error',
+            text: result.message
+          });
         }
       } catch (error) {
         this.$emit('show-message', {
           type: 'error',
           text: '搜尋失敗: ' + error.message
         });
+      } finally {
+        this.loading = false;
       }
     },
     
