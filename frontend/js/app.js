@@ -6,12 +6,16 @@ const { createRouter, createWebHashHistory } = VueRouter;
 const routes = [
   {
     path: '/',
-    redirect: '/data-query' // 改為預設導向資料查詢頁面
+    name: 'Home',
+    component: Home, // 首頁組件
+    meta: {
+      title: '首頁'
+    }
   },
   {
     path: '/data-query',
     name: 'DataQuery',
-    component: DataQuery, // 移除箭頭函數，直接引用組件
+    component: DataQuery,
     meta: {
       title: '資料查詢'
     }
@@ -19,7 +23,7 @@ const routes = [
   {
     path: '/data-update',
     name: 'DataUpdate', 
-    component: DataUpdate, // 移除箭頭函數，直接引用組件
+    component: DataUpdate,
     meta: {
       title: '資料調整'
     }
@@ -27,28 +31,20 @@ const routes = [
   {
     path: '/batch-execution',
     name: 'BatchExecution',
-    component: BatchExecution, // 移除箭頭函數，直接引用組件
+    component: BatchExecution,
     meta: {
       title: '批次執行'
     }
   },
   {
-    path: '/file-upload',
-    name: 'FileUpload',
-    component: FileUpload, // 新增檔案上傳頁面
-    meta: {
-      title: '檔案上傳'
-    }
-  },
-  {
     path: '/:pathMatch(.*)*',
-    redirect: '/data-query' // 改為導向資料查詢
+    redirect: '/' // 404 重導向到首頁
   }
 ];
 
 // 建立路由器
 const router = createRouter({
-  history: createWebHashHistory(), // 使用 hash 模式，不需要伺服器配置
+  history: createWebHashHistory(),
   routes
 });
 
@@ -340,7 +336,6 @@ app.component('AppHeader', AppHeader);
 app.component('AppSidebar', AppSidebar);
 app.component('MessageAlert', MessageAlert);
 app.component('LoadingSpinner', LoadingSpinner);
-app.component('DataTable', DataTable);
 
 // 全域屬性
 app.config.globalProperties.$api = typeof api !== 'undefined' ? api : null;

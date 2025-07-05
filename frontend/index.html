@@ -11,6 +11,7 @@
   <!-- 引入共用樣式 -->
   <link rel="stylesheet" href="css/common.css">
   <link rel="stylesheet" href="css/components.css">
+  <link rel="stylesheet" href="css/home.css">
   
   <!-- Vue.js 3 CDN -->
   <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
@@ -31,33 +32,48 @@
     <div v-else class="app-container">
       <div class="container">
         <!-- 頁首 -->
-        <app-header></app-header>
+        <app-header 
+          @show-message="showGlobalMessage"
+          @system-refresh="handleSystemRefresh">
+        </app-header>
 
         <!-- 主體區 -->
         <div class="main">
           <!-- 側邊欄 -->
           <app-sidebar 
-            :current-route="currentRoute"
-            @navigate="handleNavigation">
+            :current-route="$route.path"
+            @navigate="handleNavigation"
+            @show-message="showGlobalMessage">
           </app-sidebar>
 
           <!-- 主顯示區 -->
           <div class="content">
-            <!-- 全域訊息顯示 -->
-            <message-alert 
-              v-if="globalMessage" 
-              :message="globalMessage"
-              @close="clearGlobalMessage">
-            </message-alert>
+            <!-- 路由切換載入指示 -->
+            <div v-if="isRouteChanging" class="route-loading">
+              <div class="route-loading-bar"></div>
+            </div>
             
             <!-- 路由視圖 -->
             <router-view 
               :key="$route.fullPath"
-              @show-message="showGlobalMessage">
+              @show-message="showGlobalMessage"
+              @loading="setLoading"
+              v-slot="{ Component }">
+              <transition name="page-fade" mode="out-in">
+                <component :is="Component" />
+              </transition>
             </router-view>
           </div>
         </div>
       </div>
+    </div>
+    
+    <!-- 全域訊息容器 -->
+    <div class="alert-container">
+      <message-alert 
+        :message="globalMessage"
+        @close="clearGlobalMessage">
+      </message-alert>
     </div>
   </div>
 
@@ -71,12 +87,36 @@
   <script src="components/common/LoadingSpinner.js"></script>
   
   <!-- 引入頁面組件 -->
+  <script src="components/pages/Home.js"></script>
   <script src="components/pages/DataQuery.js"></script>
   <script src="components/pages/DataUpdate.js"></script>
   <script src="components/pages/BatchExecution.js"></script>
   
   <!-- 引入主應用 -->
   <script src="js/app.js"></script>
+  
+  <script>
+    // 除錯和錯誤處理
+    window.addEventListener('error', function(e) {
+      console.error('JavaScript 錯誤:', e.error);
+      console.error('錯誤檔案:', e.filename);
+      console.error('錯誤行號:', e.lineno);
+    });
+    
+    // 檢查必要組件是否載入
+    document.addEventListener('DOMContentLoaded', function() {
+      console.log('DOM 載入完成');
+      console.log('Vue 可用:', typeof Vue !== 'undefined');
+      console.log('VueRouter 可用:', typeof VueRouter !== 'undefined');
+      console.log('API 可用:', typeof api !== 'undefined');
+      
+      // 檢查組件是否載入
+      const components = ['AppHeader', 'AppSidebar', 'MessageAlert', 'LoadingSpinner', 'DataQuery', 'DataUpdate', 'BatchExecution'];
+      components.forEach(name => {
+        console.log(`${name} 組件可用:`, typeof window[name] !== 'undefined');
+      });
+    });
+  </script>
 
   <style>
     /* 載入頁面樣式 */
@@ -86,14 +126,14 @@
       justify-content: center;
       align-items: center;
       height: 100vh;
-      background-color: #f8f8f8;
+      background: linear-gradient(135deg, #f8f8f8 0%, #e9ecef 100%);
     }
 
     .loading-spinner {
-      width: 50px;
-      height: 50px;
-      border: 5px solid #f3f3f3;
-      border-top: 5px solid #007bff;
+      width: 60px;
+      height: 60px;
+      border: 6px solid #f3f3f3;
+      border-top: 6px solid #007bff;
       border-radius: 50%;
       animation: spin 1s linear infinite;
       margin-bottom: 20px;
@@ -108,6 +148,7 @@
       font-size: 18px;
       color: #666;
       margin: 0;
+      font-weight: 500;
     }
 
     /* 應用容器樣式 */
@@ -115,15 +156,319 @@
       min-height: 100vh;
     }
 
-    /* 確保路由切換動畫 */
-    .router-fade-enter-active,
-    .router-fade-leave-active {
-      transition: opacity 0.3s ease;
+    /* 路由切換載入指示 */
+    .route-loading {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+      z-index: 100;
     }
 
-    .router-fade-enter-from,
-    .router-fade-leave-to {
+    .route-loading-bar {
+      height: 100%;
+      background: linear-gradient(90deg, #007bff, #0056b3, #007bff);
+      background-size: 200% 100%;
+      animation: loading-slide 1.5s infinite;
+    }
+
+    @keyframes loading-slide {
+      0% {
+        background-position: 200% 0;
+      }
+      100% {
+        background-position: -200% 0;
+      }
+    }
+
+    /* 頁面切換動畫 */
+    .page-fade-enter-active {
+      transition: all 0.3s ease-out;
+    }
+
+    .page-fade-leave-active {
+      transition: all 0.2s ease-in;
+    }
+
+    .page-fade-enter-from {
       opacity: 0;
+      transform: translateX(10px);
+    }
+
+    .page-fade-leave-to {
+      opacity: 0;
+      transform: translateX(-10px);
+    }
+
+    /* 固定訊息容器位置 */
+    .alert-container {
+      position: fixed;
+      top: 100px;
+      right: 20px;
+      z-index: 1000;
+      max-width: 400px;
+      width: 100%;
+      pointer-events: none;
+    }
+
+    .alert-container .message-alert {
+      pointer-events: auto;
+      margin-bottom: 10px;
+    }
+
+    /* 響應式調整 */
+    @media (max-width: 768px) {
+      .alert-container {
+        top: 90px;
+        right: 10px;
+        left: 10px;
+        max-width: none;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .alert-container {
+        top: 85px;
+        right: 5px;
+        left: 5px;
+      }
+    }
+
+    /* 確保內容區域正確顯示 */
+    .content {
+      position: relative;
+      min-height: calc(100vh - 80px);
+    }
+
+    /* 滾動條樣式 */
+    .content::-webkit-scrollbar {
+      width: 8px;
+      height: 8px;
+    }
+
+    .content::-webkit-scrollbar-track {
+      background: #f1f1f1;
+      border-radius: 4px;
+    }
+
+    .content::-webkit-scrollbar-thumb {
+      background: #c1c1c1;
+      border-radius: 4px;
+    }
+
+    .content::-webkit-scrollbar-thumb:hover {
+      background: #a8a8a8;
+    }
+
+    /* Firefox 滾動條 */
+    .content {
+      scrollbar-width: thin;
+      scrollbar-color: #c1c1c1 #f1f1f1;
+    }
+
+    /* 深色主題支援（可選） */
+    [data-theme="dark"] .app-wrapper {
+      background-color: #1a202c;
+      color: #e2e8f0;
+    }
+
+    [data-theme="dark"] .container {
+      border-color: #4a5568;
+    }
+
+    [data-theme="dark"] .loading-container {
+      background: linear-gradient(135deg, #1a202c 0%, #2d3748 100%);
+    }
+
+    [data-theme="dark"] .loading-container p {
+      color: #a0aec0;
+    }
+
+    /* 檔案上傳頁面特殊樣式支援 */
+    .file-upload-section {
+      margin-bottom: 30px;
+    }
+
+    .upload-area {
+      border: 2px dashed #ccc;
+      border-radius: 8px;
+      padding: 40px;
+      text-align: center;
+      background-color: #f9f9f9;
+      transition: all 0.3s ease;
+      cursor: pointer;
+    }
+
+    .upload-area.dragging {
+      border-color: #007bff;
+      background-color: #e3f2fd;
+    }
+
+    .upload-content {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 15px;
+    }
+
+    .upload-icon {
+      font-size: 48px;
+      color: #007bff;
+    }
+
+    .upload-btn {
+      color: #007bff;
+      cursor: pointer;
+      text-decoration: underline;
+    }
+
+    .upload-btn:hover {
+      color: #0056b3;
+    }
+
+    /* 批次執行頁面檔案上傳區域 */
+    .file-upload-section h3 {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+
+    .section-icon {
+      font-size: 20px;
+    }
+
+    /* 檔案網格布局 */
+    .file-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+      gap: 15px;
+      margin-top: 15px;
+    }
+
+    .file-card {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 16px;
+      background-color: #f8f9fa;
+      border: 1px solid #dee2e6;
+      border-radius: 6px;
+      transition: all 0.2s ease;
+    }
+
+    .file-card:hover {
+      background-color: #e9ecef;
+      border-color: #007bff;
+    }
+
+    .file-info {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex: 1;
+      min-width: 0;
+    }
+
+    .file-icon {
+      font-size: 16px;
+      flex-shrink: 0;
+    }
+
+    .file-name {
+      font-size: 14px;
+      color: #333;
+      font-weight: 500;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .file-delete-btn {
+      padding: 4px 8px;
+      font-size: 12px;
+      background-color: #dc3545;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      flex-shrink: 0;
+    }
+
+    .file-delete-btn:hover:not(:disabled) {
+      background-color: #c82333;
+    }
+
+    .file-delete-btn:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+
+    /* 進度條樣式 */
+    .upload-progress-section {
+      margin-top: 20px;
+    }
+
+    .progress-item {
+      margin-bottom: 15px;
+    }
+
+    .progress-info {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 5px;
+    }
+
+    .filename {
+      font-weight: 500;
+      color: #333;
+    }
+
+    .progress-status {
+      font-size: 12px;
+      padding: 2px 8px;
+      border-radius: 12px;
+      color: white;
+    }
+
+    .progress-status.uploading {
+      background-color: #17a2b8;
+    }
+
+    .progress-status.success {
+      background-color: #28a745;
+    }
+
+    .progress-status.error {
+      background-color: #dc3545;
+    }
+
+    .progress-bar {
+      width: 100%;
+      height: 8px;
+      background-color: #e9ecef;
+      border-radius: 4px;
+      overflow: hidden;
+    }
+
+    .progress-fill {
+      height: 100%;
+      transition: width 0.3s ease;
+    }
+
+    .progress-fill.uploading {
+      background-color: #17a2b8;
+    }
+
+    .progress-fill.success {
+      background-color: #28a745;
+    }
+
+    .progress-fill.error {
+      background-color: #dc3545;
     }
   </style>
 </body>

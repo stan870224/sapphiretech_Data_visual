@@ -1,0 +1,105 @@
+/* 首頁樣式 - 簡化版 */
+.home-page {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0;
+}
+
+/* 歡迎橫幅 */
+.welcome-banner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  padding: 60px 40px;
+  border-radius: 12px;
+  margin-bottom: 40px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+}
+
+.banner-content {
+  flex: 1;
+}
+
+.system-title {
+  margin: 0 0 20px 0;
+  font-weight: 300;
+}
+
+.logo-text {
+  font-family: 'Orbitron', sans-serif;
+  font-size: 48px;
+  font-weight: 700;
+  display: block;
+  letter-spacing: 3px;
+}
+
+.subtitle {
+  font-size: 24px;
+  font-weight: 300;
+  display: block;
+  margin-top: 8px;
+  opacity: 0.9;
+}
+
+.system-description {
+  font-size: 18px;
+  line-height: 1.6;
+  opacity: 0.9;
+  margin: 0 0 20px 0;
+  max-width: 500px;
+}
+
+.version-badge {
+  display: inline-block;
+  background: rgba(255, 255, 255, 0.2);
+  padding: 8px 16px;
+  border-radius: 20px;
+  font-size: 14px;
+  font-weight: 500;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.banner-illustration {
+  flex-shrink: 0;
+  margin-left: 40px;
+}
+
+.banner-illustration .feature-icon {
+  font-size: 120px;
+  opacity: 0.3;
+}
+
+/* 響應式設計 */
+@media (max-width: 768px) {
+  .welcome-banner {
+    flex-direction: column;
+    text-align: center;
+    padding: 40px 20px;
+  }
+  
+  .banner-illustration {
+    margin-left: 0;
+    margin-top: 20px;
+  }
+  
+  .logo-text {
+    font-size: 36px;
+  }
+  
+  .subtitle {
+    font-size: 20px;
+  }
+}
+
+@media (max-width: 480px) {
+  .home-page {
+    padding: 10px;
+  }
+  
+  .welcome-banner {
+    margin-bottom: 20px;
+    padding: 30px 15px;
+  }
+}
